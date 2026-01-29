@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fofij</title>
+
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="side-top">
+        <div class="brand">
+          <div class="brand-icon"><i class="fas fa-paper-plane"></i></div>
+          <div class="brand-text">
+            <div class="brand-name">Fofij</div>
+            <div class="brand-sub">чат • боты • подарки</div>
+          </div>
+        </div>
+
+        <button class="icon-btn" id="profileBtn" title="Профиль">
+          <span class="avatar" id="myAvatar">F</span>
+        </button>
+      </div>
+
+      <div class="side-search">
+        <i class="fa fa-search"></i>
+        <input id="searchInput" placeholder="Поиск чатов, ботов…" />
+      </div>
+
+      <div class="side-actions">
+        <button class="btn ghost" id="newChatBtn">
+          <i class="fa fa-user-plus"></i> Диалог
+        </button>
+
+        <button class="btn ghost" id="createGroupBtn">
+          <i class="fa fa-users"></i> Группа
+        </button>
+
+        <button class="btn ghost" id="createChannelBtn">
+          <i class="fa fa-bullhorn"></i> Канал
+        </button>
+
+        <button class="btn ghost" id="giftsBtn">
+          <i class="fa fa-gift"></i> Звёзды/подарки
+          <span class="pill" id="starsPill">⭐ 0</span>
+        </button>
+
+        <button class="btn admin" id="adminBtn" style="display:none;">
+          <i class="fa fa-shield"></i> Админ панель
+        </button>
+      </div>
+
+      <div class="chatlist" id="chatList"></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="icon-btn mobile" id="mobileMenuBtn"><i class="fa fa-bars"></i></button>
+
+        <div class="chat-head">
+          <div class="chatpic" id="chatPic">?</div>
+          <div class="chatmeta">
+            <div class="title" id="chatTitle">Fofij</div>
+            <div class="subtitle" id="chatSubtitle">Выберите чат</div>
+          </div>
+        </div>
+
+        <div class="top-actions" id="topActions" style="display:none;">
+          <button class="icon-btn" id="openWebAppBtn" title="Открыть веб-кнопку" style="display:none;">
+            <i class="fa fa-globe"></i>
+          </button>
+        </div>
+      </header>
+
+      <section class="messages" id="messages">
+        <div class="welcome" id="welcome">
+          <div class="emoji">👋</div>
+          <h1>Добро пожаловать в Fofij</h1>
+          <p>Войдите по номеру телефона и начните переписку в реальном времени.</p>
+          <button class="btn primary" id="openLoginBtn">
+            <i class="fa fa-phone"></i> Войти по номеру
+          </button>
+        </div>
+      </section>
+
+      <footer class="composer" id="composer" style="display:none;">
+        <button class="icon-btn" id="openStickerPickerBtn" title="Стикеры">
+          <i class="fa-regular fa-face-smile"></i>
+        </button>
+
+        <textarea id="msgInput" placeholder="Сообщение…" rows="1"></textarea>
+
+        <button class="icon-btn" id="openEmojiPickerBtn" title="Эмодзи">
+          <i class="fa fa-star"></i>
+        </button>
+
+        <button class="btn send" id="sendBtn" disabled>
+          <i class="fa fa-paper-plane"></i>
+        </button>
+      </footer>
+    </main>
+  </div>
+
+  <!-- ===== MODALS ===== -->
+
+  <!-- Login / Phone + optional email -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal">
+      <div class="mhead">
+        <div class="mtitle">Вход в Fofij</div>
+        <button class="icon-btn" data-close="loginModal"><i class="fa fa-times"></i></button>
+      </div>
+      <div class="mbody">
+        <div class="grid2">
+          <div class="field">
+            <label>Телефон (без SMS)</label>
+            <input id="phoneInput" placeholder="+7 999 123 45 67" />
+          </div>
+          <div class="field">
+            <label>Email (не обязательно)</label>
+            <input id="emailInput" placeholder="name@mail.com" />
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label>Имя</label>
+            <input id="firstNameInput" placeholder="Иван" />
+          </div>
+          <div class="field">
+            <label>Фамилия</label>
+            <input id="lastNameInput" placeholder="Иванов" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Username (латиница/цифры/_)</label>
+          <input id="usernameInput" placeholder="fofij_user" />
+          <div class="hint">Будет: @fofij_user</div>
+        </div>
+
+        <div class="row">
+          <button class="btn primary" id="loginBtn">
+            <i class="fa fa-check"></i> Продолжить
+          </button>
+        </div>
+
+        <div class="hint">
+          Email можно привязать позже в профиле.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile -->
+  <div class="modal-overlay" id="profileModal">
+    <div class="modal">
+      <div class="mhead">
+        <div class="mtitle">Профиль</div>
+        <button class="icon-btn" data-close="profileModal"><i class="fa fa-times"></i></button>
+      </div>
+      <div class="mbody">
+        <div class="profile-card">
+          <div class="big-avatar" id="profileAvatar">F</div>
+          <div>
+            <div class="pname" id="profileName">—</div>
+            <div class="psub" id="profileUser">—</div>
+            <div class="psub" id="profilePhone">—</div>
+            <div class="psub" id="profileEmail">—</div>
+            <div class="psub" id="profileStars">—</div>
+            <div class="psub" id="profilePremium">—</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Привязать/изменить email (не обязательно)</label>
+          <input id="profileEmailEdit" placeholder="name@mail.com" />
+        </div>
+
+        <div class="row">
+          <button class="btn ghost" id="saveEmailBtn"><i class="fa fa-save"></i> Сохранить email</button>
+          <button class="btn danger" id="logoutBtn"><i class="fa fa-right-from-bracket"></i> Выйти</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create direct -->
+  <div class="modal-overlay" id="directModal">
+    <div class="modal">
+      <div class="mhead">
+        <div class="mtitle">Новый диалог</div>
+        <button class="icon-btn" data-close="directModal"><i class="fa fa-times"></i></button>
+      </div>
+      <div class="mbody">
+        <div class="field">
+          <label>Username собеседника</label>
+          <input id="peerUsernameInput" placeholder="@username" />
+        </div>
+        <button class="btn primary" id="createDirectBtn"><i class="fa fa-comments"></i> Создать / Открыть</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create group/channel -->
+  <div class="modal-overlay" id="createRoomModal">
+    <div class="modal">
+      <div class="mhead">
+        <div class="mtitle" id="roomModalTitle">Создать</div>
+        <button class="icon-btn" data-close="createRoomModal"><i class="fa fa-times"></i></button>
+      </div>
+      <div class="mbody">
+        <div class="field">
+          <label>Название</label>
+          <input id="roomNameInput" placeholder="Название" />
+        </div>
+        <div class="field">
+          <label>Описание</label>
+          <textarea id="roomDescInput" rows="3" placeholder="Описание…"></textarea>
+        </div>
+        <button class="btn primary" id="createRoomBtn"><i class="fa fa-plus"></i> Создать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gifts -->
+  <div class="modal-overlay" id="giftsModal">
+    <div class="modal">
+      <div class="mhead">
+        <div class="mtitle">⭐ Звёзды и подарки</div>
+        <button class="icon-btn" data-close="giftsModal"><i class="fa fa-times"></i></button>
+      </div>
+      <div class="mbody">
+        <div class="hint">Подарки редактируются в <b>app.js</b> (массив GIFTS).</div>
+        <div class="gifts" id="giftsGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticker picker -->
+  <div class="modal-overlay" id="stickerModal">
+    <div class="modal">
+      <div class="mhead">
+        <div class="mtitle">🙂 Стикеры</div>
+        <button class="icon-btn" data-close="stickerModal"><i class="fa fa-times"></i></button>
+      </div>
+      <div class="mbody">
+        <div class="row">
+          <button class="btn ghost" id="openStickerCreateBtn"><i class="fa fa-plus"></i> Создать</button>
+          <span class="hint">Создание — через бот Sticers, но можно и тут.</span>
+        </div>
+        <div class="sticker-grid" id="stickerGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticker create -->
+  <div class="modal-overlay" id="stickerCreateModal">
+    <div class="modal">
+      <div class="mhead">
+        <div class="mtitle">Создать стикер</div>
+        <button class="icon-btn" data-close="stickerCreateModal"><i class="fa fa-times"></i></button>
+      </div>
+      <div class="mbody">
+        <div class="field">
+          <label>Название</label>
+          <input id="stickerNameInput" placeholder="Например: Котик" />
+        </div>
+        <div class="field">
+          <label>Изображение</label>
+          <input id="stickerFileInput" type="file" accept="image/*" />
+        </div>
+        <button class="btn primary" id="saveStickerBtn"><i class="fa fa-save"></i> Сохранить</button>
+        <div class="hint">Хранится в Firestore как dataURL (для демо). Для больших файлов лучше Firebase Storage.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Emoji picker / Premium animated emojis -->
+  <div class="modal-overlay" id="emojiModal">
+    <div class="modal">
+      <div class="mhead">
+        <div class="mtitle">⭐ Эмодзи</div>
+        <button class="icon-btn" data-close="emojiModal"><i class="fa fa-times"></i></button>
+      </div>
+      <div class="mbody">
+        <div class="row">
+          <span class="pill">Premium: <b id="premiumPill">нет</b></span>
+          <button class="btn ghost" id="openEmojiCreateBtn"><i class="fa fa-wand-magic-sparkles"></i> Создать</button>
+        </div>
+        <div class="emoji-grid" id="emojiGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Emoji create -->
+  <div class="modal-overlay" id="emojiCreateModal">
+    <div class="modal">
+      <div class="mhead">
+        <div class="mtitle">Создать аним. эмодзи (Premium)</div>
+        <button class="icon-btn" data-close="emojiCreateModal"><i class="fa fa-times"></i></button>
+      </div>
+      <div class="mbody">
+        <div class="field">
+          <label>Название</label>
+          <input id="emojiNameInput" placeholder="Например: spark" />
+        </div>
+        <div class="field">
+          <label>Файл (GIF/WebP)</label>
+          <input id="emojiFileInput" type="file" accept="image/gif,image/webp" />
+        </div>
+        <button class="btn primary" id="saveEmojiBtn"><i class="fa fa-save"></i> Сохранить</button>
+        <div class="hint">Только Premium. Демо хранит как dataURL.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin panel: bot builder -->
+  <div class="modal-overlay" id="adminModal">
+    <div class="modal">
+      <div class="mhead">
+        <div class="mtitle">Админ панель — Боты</div>
+        <button class="icon-btn" data-close="adminModal"><i class="fa fa-times"></i></button>
+      </div>
+      <div class="mbody">
+        <div class="row">
+          <button class="btn primary" id="openBotCreateBtn"><i class="fa fa-robot"></i> Создать бота</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field">
+          <label>Мои/системные боты</label>
+          <div class="botlist" id="botList"></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="hint">
+          В редакторе бота можно добавлять команды → ответы (текст) + кнопки.
+          Веб-кнопка у бота: “Открыть …” (iframe). Некоторые сайты могут блокировать iframe (X-Frame-Options).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bot editor -->
+  <div class="modal-overlay" id="botEditorModal">
+    <div class="modal">
+      <div class="mhead">
+        <div class="mtitle">Редактор бота</div>
+        <button class="icon-btn" data-close="botEditorModal"><i class="fa fa-times"></i></button>
+      </div>
+      <div class="mbody">
+        <div class="grid2">
+          <div class="field">
+            <label>Имя</label>
+            <input id="botNameInput" placeholder="Bot Name" />
+          </div>
+          <div class="field">
+            <label>Username</label>
+            <input id="botUserInput" placeholder="@mybot" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Описание</label>
+          <input id="botDescInput" placeholder="Описание" />
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label>Веб-кнопка (название)</label>
+            <input id="botWebTitleInput" placeholder="Открыть" />
+          </div>
+          <div class="field">
+            <label>Веб-сайт (URL)</label>
+            <input id="botWebUrlInput" placeholder="https://example.com" />
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field">
+          <label>Новая команда</label>
+          <div class="grid2">
+            <input id="cmdNameInput" placeholder="/start" />
+            <input id="cmdReplyInput" placeholder="Текст ответа" />
+          </div>
+          <div class="hint">Кнопки: через “label|payload”, по одной в строке</div>
+          <textarea id="cmdButtonsInput" rows="3" placeholder="Например:
+Начать|/start
+Открыть сайт|webapp"></textarea>
+          <button class="btn ghost" id="addCmdBtn"><i class="fa fa-plus"></i> Добавить команду</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <button class="btn primary" id="saveBotBtn"><i class="fa fa-save"></i> Сохранить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WebApp (iframe) -->
+  <div class="modal-overlay" id="webAppModal">
+    <div class="modal wide">
+      <div class="mhead">
+        <div class="mtitle" id="webAppTitle">Web</div>
+        <button class="icon-btn" data-close="webAppModal"><i class="fa fa-times"></i></button>
+      </div>
+      <div class="mbody iframe-wrap">
+        <iframe id="webAppFrame" src="about:blank"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <div class="t-title" id="toastTitle">Уведомление</div>
+    <div class="t-msg" id="toastMsg">…</div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
